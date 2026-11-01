@@ -1,0 +1,56 @@
+/** Local paid-flow test (memory KV, dummy secret). Run: npx tsx scripts/paid-test.ts */
+import http from "node:http";
+import { createHmac } from "node:crypto";
+process.env.STRIPE_WEBHOOK_SECRET = "whsec_dummy_test";
+process.env.PAYMENT_LINK_URL = "https://buy.stripe.com/test_x";
+process.env.FREE_DAILY_LIMIT = "3";
+delete process.env.KV_REST_API_URL; delete process.env.UPSTASH_REDIS_REST_URL;
+const { default: webhook } = await import("../api/stripe-webhook.js");
+const { default: success } = await import("../api/success.js");
+const { default: now } = await import("../api/now.js");
+const { default: mcp } = await import("../api/mcp.js");
+const { _setKV } = await import("../src/store.js");
+let failed = 0;
+const check = (n: string, ok: boolean, d?: unknown) => { ok ? console.log("PASS", n) : (failed++, console.error("FAIL", n, d ?? "")); };
+const srv = http.createServer((req, res) => {
+  const p = new URL(req.url!, "http://x").pathname;
+  if (p === "/wh") return webhook(req, res);
+  if (p === "/success") return success(req, res);
+  if (p === "/mcp") return mcp(req, res);
+  return now(req, res);
+}).listen(0);
+const base = `http://127.0.0.1:${(srv.address() as any).port}`;
+const sign = (body: string, secret = "whsec_dummy_test") => { const t = Math.floor(Date.now() / 1000); return `t=${t},v1=${createHmac("sha256", secret).update(`${t}.${body}`).digest("hex")}`; };
+const ev = JSON.stringify({ type: "checkout.session.completed", data: { object: { id: "cs_test_abc123", payment_status: "paid", amount_total: 500 } } });
+const post = (body: string, sig?: string) => fetch(base + "/wh", { method: "POST", body, headers: sig ? { "stripe-signature": sig } : {} });
+
+check("pending before webhook", (await fetch(base + "/success?session_id=cs_test_abc123", { headers: { accept: "application/json" } })).status === 202);
+check("bad signature rejected", (await post(ev, sign(ev, "wrong"))).status === 400);
+check("missing signature rejected", (await post(ev)).status === 400);
+let r = await (await post(ev, sign(ev))).json(); check("first webhook issues", r.issued === true, r);
+r = await (await post(ev, sign(ev))).json(); check("retry does not issue", r.issued === false, r);
+const s = await (await fetch(base + "/success?session_id=cs_test_abc123", { headers: { accept: "application/json" } })).json();
+check("success shows key + 20000 credits", s.status === "ready" && /^cg_/.test(s.api_key) && s.credits === 20000, s);
+const html = await (await fetch(base + "/success?session_id=cs_test_abc123")).text();
+check("success html has key", html.includes(s.api_key));
+const auth = { authorization: `Bearer ${s.api_key}` };
+let a = await fetch(base + "/v1/now?tz=UTC", { headers: auth }); check("paid call 200", a.status === 200 && a.headers.get("x-ratelimit-remaining") === "19999");
+a = await fetch(base + "/v1/now?tz=UTC", { headers: auth }); check("credits decrement", a.headers.get("x-ratelimit-remaining") === "19998");
+const m = await (await fetch(base + "/mcp", { method: "POST", headers: { ...auth, "content-type": "application/json" }, body: JSON.stringify({ jsonrpc: "2.0", id: 1, method: "tools/call", params: { name: "now", arguments: { tz: "UTC" } } }) })).json();
+check("mcp paid call ok", !m.result?.isError, m);
+check("bad key 401", (await fetch(base + "/v1/now", { headers: { authorization: "Bearer cg_nope" } })).status === 401);
+// exhaust: force credits to 0
+const { hashKey } = await import("../src/billing.js");
+const { kv } = await import("../src/store.js");
+await kv().set(`cg:key:${hashKey(s.api_key)}`, "0");
+const e = await fetch(base + "/v1/now", { headers: auth }); const eb = await e.json();
+check("exhausted 402 + buy link", e.status === 402 && eb.buy === "https://buy.stripe.com/test_x", eb);
+for (let i = 0; i < 3; i++) await fetch(base + "/v1/now", { headers: { "x-forwarded-for": "9.9.9.9" } });
+const f = await fetch(base + "/v1/now", { headers: { "x-forwarded-for": "9.9.9.9" } }); const fb = await f.json();
+check("free limit 402 + buy link", f.status === 402 && fb.buy === "https://buy.stripe.com/test_x", fb);
+const unpaid = JSON.stringify({ type: "checkout.session.completed", data: { object: { id: "cs_test_unpaid", payment_status: "unpaid" } } });
+r = await (await post(unpaid, sign(unpaid))).json(); check("unpaid not issued", r.issued === false, r);
+delete process.env.STRIPE_WEBHOOK_SECRET;
+check("no secret -> fail closed 503", (await post(ev, sign(ev))).status === 503);
+srv.close(); _setKV(undefined);
+console.log(failed ? `${failed} FAILED` : "ALL PASS"); process.exit(failed ? 1 : 0);

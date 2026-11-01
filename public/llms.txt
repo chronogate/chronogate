@@ -13,10 +13,17 @@
 - [Remote MCP endpoint](https://chronogate-self.vercel.app/mcp): Streamable HTTP JSON-RPC (2025-06-18). Tools: now, convert, resolve_expression, is_business_day, add_business_days
 
 ## Limits
-- Free: 200 calls/day per IP. Over limit → HTTP 429 with clear message. Resets 00:00 UTC.
+- Free: 200 calls/day per IP. Over limit → HTTP 402 JSON with a `buy` link. Resets 00:00 UTC.
 
 ## Data
 - Holidays from Nager.Date public API; if unavailable, weekend logic still works (holiday_source=unavailable).
 
 ## Legal
 - [Terms](https://chronogate-self.vercel.app/terms.html): operated by ChronoGate
+
+## Paid credits
+
+- $5 = 20,000 calls (one-time pack, no subscription). Buy: https://buy.stripe.com/test_3cIeVec3Hagz6ZBc4VgMw00 (Stripe test mode for now)
+- After paying you land on /success, which shows your `cg_` API key once (kept 7 days).
+- REST: `Authorization: Bearer cg_...`. MCP: same header on https://chronogate-self.vercel.app/mcp
+- 1 credit per call. Unknown key → 401. Empty key or free tier used up → 402 with a `buy` link.

@@ -4,7 +4,7 @@ Timezone and business-day truth for scheduling agents. LLMs guess at "now", DST 
 
 - **Remote MCP:** `https://chronogate-self.vercel.app/mcp` (Streamable HTTP, JSON-RPC, protocol 2025-06-18, stateless)
 - **Docs for agents:** [https://chronogate-self.vercel.app/llms.txt](https://chronogate-self.vercel.app/llms.txt)
-- **Free tier:** 200 calls/day per IP, no API key. Over the limit returns HTTP 429; resets 00:00 UTC. Paid tier coming.
+- **Free tier:** 200 calls/day per IP, no API key. Over the limit returns HTTP 402 (with buy link); resets 00:00 UTC. Paid tier coming.
 
 ## MCP tools
 
@@ -59,3 +59,10 @@ Deploys as Vercel serverless functions (see `vercel.json`).
 - ChronoGate is not affiliated with chronogate.io.
 
 MIT licensed.
+
+## Paid credits
+
+- $5 = 20,000 calls (one-time pack, no subscription). Buy: https://buy.stripe.com/test_3cIeVec3Hagz6ZBc4VgMw00 (Stripe test mode for now)
+- After paying you land on /success, which shows your `cg_` API key once (kept 7 days).
+- REST: `Authorization: Bearer cg_...`. MCP: same header on https://chronogate-self.vercel.app/mcp
+- 1 credit per call. Unknown key → 401. Empty key or free tier used up → 402 with a `buy` link.

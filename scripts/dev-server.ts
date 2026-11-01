@@ -7,6 +7,8 @@ import resolve from "../api/resolve.js";
 import businessDay from "../api/business-day.js";
 import businessDaysAdd from "../api/business-days-add.js";
 import mcp from "../api/mcp.js";
+import success from "../api/success.js";
+import webhook from "../api/stripe-webhook.js";
 
 const port = Number(process.env.PORT || 3000);
 http
@@ -17,6 +19,8 @@ http
     if (p === "/v1/resolve" || p === "/api/resolve") return resolve(req, res);
     if (p === "/v1/business-day" || p === "/api/business-day") return businessDay(req, res);
     if (p === "/v1/business-days/add" || p === "/api/business-days-add") return businessDaysAdd(req, res);
+    if (p === "/success") return success(req, res);
+    if (p === "/api/stripe/webhook" || p === "/api/stripe-webhook") return webhook(req, res);
     if (p === "/mcp" || p === "/api/mcp") return mcp(req, res);
     const f = path.join("public", p === "/" ? "index.html" : path.normalize(p).replace(/^\/+/, ""));
     if (f.startsWith("public") && fs.existsSync(f) && fs.statSync(f).isFile()) {

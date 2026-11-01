@@ -15,7 +15,7 @@ export async function withQuota(
     "x-ratelimit-remaining": String(q.remaining),
     "x-plan": q.plan,
   };
-  if (!q.allowed) return send(res, 429, overLimitBody(q), rl);
+  if (!q.allowed) return send(res, q.status, overLimitBody(q), rl);
   try {
     return send(res, 200, await run(), rl);
   } catch (e: any) {

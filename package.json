@@ -10,8 +10,11 @@
     "typecheck": "tsc --noEmit",
     "test": "tsx scripts/smoke.ts"
   },
-  "engines": { "node": ">=20" },
+  "engines": {
+    "node": ">=20"
+  },
   "dependencies": {
+    "@upstash/redis": "^1.40.0",
     "luxon": "^3.5.0"
   },
   "devDependencies": {
