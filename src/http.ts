@@ -1,8 +1,8 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 
 export function clientIp(req: IncomingMessage) {
-  const xf = String(req.headers["x-forwarded-for"] || "").split(",")[0].trim();
-  return xf || String(req.headers["x-real-ip"] || req.socket.remoteAddress || "unknown");
+  const h = (n: string) => String(req.headers[n] || "").split(",")[0].trim();
+  return h("x-vercel-forwarded-for") || h("x-real-ip") || h("x-forwarded-for") || String(req.socket.remoteAddress || "unknown");
 }
 
 export function send(res: ServerResponse, status: number, body: unknown, headers: Record<string, string> = {}) {

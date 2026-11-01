@@ -47,8 +47,8 @@ function redisKV(url: string, token: string): KV {
 let _kv: KV | undefined;
 export function kv(): KV {
   if (_kv) return _kv;
-  const url = process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL;
-  const token = process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN;
+  const url = process.env.CG_KV_REST_API_URL || process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL;
+  const token = process.env.CG_KV_REST_API_TOKEN || process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN;
   _kv = url && token ? redisKV(url, token) : memoryKV();
   return _kv;
 }
