@@ -1,0 +1,22 @@
+# ChronoGate
+
+> Timezone and business-day truth for scheduling agents. Authoritative now in any IANA zone, DST-safe convert, relative expression resolve, and public-holiday-aware business days. Not related to chronogate.io IoT.
+
+## API
+- [GET /v1/now?tz=IANA](https://chronogate-self.vercel.app/v1/now?tz=America/Chicago): current UTC + wall time in zone
+- [GET /v1/convert?iso=&from=&to=](https://chronogate-self.vercel.app/v1/convert?iso=2026-03-08T08:00:00Z&to=America/Chicago): convert between zones
+- [GET /v1/resolve?expr=&tz=](https://chronogate-self.vercel.app/v1/resolve?expr=next%20Tuesday%203pm&tz=America/Chicago): resolve "next Tuesday 3pm", "tomorrow 9am", "in N business days"
+- [GET /v1/business-day?date=YYYY-MM-DD&country=US](https://chronogate-self.vercel.app/v1/business-day?date=2026-07-04&country=US): weekend + Nager.Date holidays
+- [GET /v1/business-days/add?start=&days=&country=](https://chronogate-self.vercel.app/v1/business-days/add?start=2026-07-02&days=3&country=US): add business days
+
+## MCP
+- [Remote MCP endpoint](https://chronogate-self.vercel.app/mcp): Streamable HTTP JSON-RPC (2025-06-18). Tools: now, convert, resolve_expression, is_business_day, add_business_days
+
+## Limits
+- Free: 200 calls/day per IP. Over limit → HTTP 429 with clear message. Resets 00:00 UTC.
+
+## Data
+- Holidays from Nager.Date public API; if unavailable, weekend logic still works (holiday_source=unavailable).
+
+## Legal
+- [Terms](https://chronogate-self.vercel.app/terms.html): operated by ChronoGate

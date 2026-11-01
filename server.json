@@ -1,0 +1,10 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.chronogate/chronogate",
+  "title": "ChronoGate",
+  "description": "Timezone and business-day truth for agents: now, DST-safe convert, relative dates, holidays.",
+  "version": "0.1.0",
+  "websiteUrl": "https://chronogate-self.vercel.app/llms.txt",
+  "repository": { "url": "https://github.com/chronogate/chronogate", "source": "github" },
+  "remotes": [{ "type": "streamable-http", "url": "https://chronogate-self.vercel.app/mcp" }]
+}

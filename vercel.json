@@ -1,0 +1,13 @@
+{
+  "rewrites": [
+    { "source": "/mcp", "destination": "/api/mcp" },
+    { "source": "/v1/now", "destination": "/api/now" },
+    { "source": "/v1/convert", "destination": "/api/convert" },
+    { "source": "/v1/resolve", "destination": "/api/resolve" },
+    { "source": "/v1/business-day", "destination": "/api/business-day" },
+    { "source": "/v1/business-days/add", "destination": "/api/business-days-add" }
+  ],
+  "functions": {
+    "api/*.ts": { "maxDuration": 15 }
+  }
+}

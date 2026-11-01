@@ -1,0 +1,34 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ChronoGate — timezone &amp; business-day truth for agents</title>
+<meta name="description" content="One MCP/API for authoritative now in any IANA zone, DST-safe convert, relative expression resolve, and business-day / public-holiday checks in 100+ countries.">
+<link rel="alternate" type="text/plain" href="/llms.txt">
+<style>body{font:16px/1.55 system-ui,sans-serif;max-width:760px;margin:40px auto;padding:0 20px;color:#111}code,pre{background:#f3f3f3;border-radius:6px}pre{padding:12px;overflow:auto}h1{margin-bottom:0}.sub{color:#555;margin-top:4px}footer{margin-top:48px;color:#666;font-size:14px}.note{background:#fff8e6;border:1px solid #f0e0a0;padding:10px 12px;border-radius:8px;font-size:14px}</style></head><body>
+<h1>ChronoGate</h1>
+<p class="sub">Timezone and business-day truth for scheduling agents. Stop guessing DST and holidays.</p>
+<p class="note">ChronoGate is an <strong>agent-facing timezone / business-day MCP</strong>. We are not related to chronogate.io or any IoT/hardware product.</p>
+
+<h2>Try it</h2>
+<pre>curl "https://chronogate-self.vercel.app/v1/now?tz=America/Chicago"
+curl "https://chronogate-self.vercel.app/v1/convert?iso=2026-03-08T02:30:00&amp;from=America/Chicago&amp;to=UTC"
+curl "https://chronogate-self.vercel.app/v1/resolve?expr=next%20Tuesday%203pm&amp;tz=America/Chicago"
+curl "https://chronogate-self.vercel.app/v1/business-day?date=2026-07-04&amp;country=US"
+curl "https://chronogate-self.vercel.app/v1/business-days/add?start=2026-07-02&amp;days=3&amp;country=US"</pre>
+
+<h2>MCP</h2>
+<p>Remote MCP (Streamable HTTP, protocol 2025-06-18): <code>https://chronogate-self.vercel.app/mcp</code></p>
+<pre>{"mcpServers":{"chronogate":{"url":"https://chronogate-self.vercel.app/mcp"}}}</pre>
+<p>Tools: <code>now</code>, <code>convert</code>, <code>resolve_expression</code>, <code>is_business_day</code>, <code>add_business_days</code>.</p>
+
+<h2>What you get</h2>
+<ul>
+<li>Authoritative <code>now</code> in any IANA zone (offset + DST flag)</li>
+<li>Convert across zones with DST handled</li>
+<li>Resolve <code>next Tuesday 3pm</code>, <code>tomorrow 9am</code>, <code>in N business days</code></li>
+<li>Business-day checks using weekends + <a href="https://date.nager.at/">Nager.Date</a> public holidays (100+ countries)</li>
+</ul>
+
+<h2>Limits</h2>
+<p>Free: 200 calls/day per IP, no key needed. Over the limit → HTTP 429 JSON. Paid packs coming later.</p>
+
+<footer>© 2026 ChronoGate · <a href="/terms.html">Terms</a> · <a href="/llms.txt">llms.txt</a></footer>
+</body></html>

@@ -1,0 +1,8 @@
+node_modules
+.vercel
+.env*
+dist
+.agents/
+skills-lock.json
+PLAN.md
+LISTINGS.md
