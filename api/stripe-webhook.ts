@@ -14,10 +14,12 @@ async function raw(req: IncomingMessage): Promise<string> {
 export default async function handler(req: IncomingMessage, res: ServerResponse) {
   if (req.method !== "POST") return send(res, 405, { error: "METHOD_NOT_ALLOWED" });
   const secret = process.env.STRIPE_WEBHOOK_SECRET || "";
+  const secrets = [secret, process.env.STRIPE_WEBHOOK_SECRET_TEST || ""].filter(Boolean);
   if (!secret) return send(res, 503, { error: "WEBHOOK_NOT_CONFIGURED" }); // fail closed
   let body: string;
   try { body = await raw(req); } catch { return send(res, 413, { error: "TOO_LARGE" }); }
-  if (!verifyStripeSig(body, req.headers["stripe-signature"] as string | undefined, secret)) return send(res, 400, { error: "BAD_SIGNATURE" });
+  const sigHdr = req.headers["stripe-signature"] as string | undefined;
+  if (!secrets.some((sec) => verifyStripeSig(body, sigHdr, sec))) return send(res, 400, { error: "BAD_SIGNATURE" });
   let ev: any;
   try { ev = JSON.parse(body); } catch { return send(res, 400, { error: "BAD_JSON" }); }
   if (ev.type === "checkout.session.completed" || ev.type === "checkout.session.async_payment_succeeded") {

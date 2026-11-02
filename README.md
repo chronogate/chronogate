@@ -62,7 +62,7 @@ MIT licensed.
 
 ## Paid credits
 
-- $5 = 20,000 calls (one-time pack, no subscription). Buy: https://buy.stripe.com/test_3cIeVec3Hagz6ZBc4VgMw00 (Stripe test mode for now)
+- $5 = 20,000 calls (one-time pack, no subscription). Buy: https://buy.stripe.com/3cIeVec3Hagz6ZBc4VgMw00
 - After paying you land on /success, which shows your `cg_` API key once (kept 7 days).
 - REST: `Authorization: Bearer cg_...`. MCP: same header on https://chronogate-self.vercel.app/mcp
 - 1 credit per call. Unknown key → 401. Empty key or free tier used up → 402 with a `buy` link.
