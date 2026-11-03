@@ -95,7 +95,7 @@ async function callTool(name: string, args: any) {
   }
 }
 
-async function handle(msg: any, ip: string, key?: string) {
+export async function handle(msg: any, ip: string, key?: string) {
   const { id, method, params } = msg || {};
   const ok = (result: any) => ({ jsonrpc: "2.0", id, result });
   const err = (code: number, message: string, data?: any) => ({ jsonrpc: "2.0", id, error: { code, message, data } });

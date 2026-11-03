@@ -66,3 +66,11 @@ MIT licensed.
 - After paying you land on /success, which shows your `cg_` API key once (kept 7 days).
 - REST: `Authorization: Bearer cg_...`. MCP: same header on https://chronogate-self.vercel.app/mcp
 - 1 credit per call. Unknown key → 401. Empty key or free tier used up → 402 with a `buy` link.
+
+## Docker (stdio MCP)
+
+```sh
+docker build -t chronogate .
+docker run -i --rm chronogate        # MCP over stdio; wrap with mcp-proxy for HTTP
+npm run healthcheck                  # initialize + tools/list handshake (also the Docker HEALTHCHECK)
+```

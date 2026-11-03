@@ -8,7 +8,9 @@
   "scripts": {
     "dev": "tsx scripts/dev-server.ts",
     "typecheck": "tsc --noEmit",
-    "test": "tsx scripts/smoke.ts"
+    "test": "tsx scripts/smoke.ts",
+    "stdio": "tsx scripts/stdio.ts",
+    "healthcheck": "tsx scripts/healthcheck.ts"
   },
   "engines": {
     "node": ">=20"
