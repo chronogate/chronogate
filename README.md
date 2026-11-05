@@ -1,5 +1,7 @@
 # ChronoGate
 
+[![Listed on mcpservers.org](https://mcpservers.org/badge.svg)](https://mcpservers.org/servers/chronogate/chronogate)
+
 Timezone and business-day truth for scheduling agents. LLMs guess at "now", DST and holidays; ChronoGate answers authoritatively: current time in any IANA zone, DST-safe conversion, relative expressions ("next Tuesday 3pm", "in 3 business days"), and public-holiday-aware business days for 100+ countries (via Nager.Date).
 
 - **Remote MCP:** `https://chronogate-self.vercel.app/mcp` (Streamable HTTP, JSON-RPC, protocol 2025-06-18, stateless)
